@@ -4,14 +4,14 @@ from datetime import datetime
 import time
 
 def fetch_exchange_rates():
-    # Sana oralig'ini belgilaymiz (2024-yil 1-yanvardan bugungi kungacha)
+    # Define date range from Jan 1, 2024 to present
     start_date = datetime(2024, 1, 1)
     end_date = datetime.now()
     
     date_list = pd.date_range(start=start_date, end=end_date)
     data = []
 
-    print("CBU API'dan ma'lumotlar yig'ish boshlandi...")
+    print("Data fetching from CBU API started...")
 
     for single_date in date_list:
         date_str = single_date.strftime('%Y-%m-%d')
@@ -30,17 +30,18 @@ def fetch_exchange_rates():
                         'Rate': float(item.get('Rate', 0))
                     })
         except Exception as e:
-            print(f"Xatolik {date_str} sanasida: {e}")
+            print(f"Error on date {date_str}: {e}")
         
-        # Serverga ortiqcha yuklama bermaslik uchun kichik tanaffus
+        # Brief pause to prevent server overload
         time.sleep(0.05)
 
-    # DataFrame ga o'tkazamiz va CSV faylga yozamiz
+    # Convert to DataFrame and export to CSV
     df = pd.DataFrame(data)
     csv_filename = 'dollar_historik_2024_2026.csv'
     df.to_csv(csv_filename, index=False, encoding='utf-8-sig')
 
-    print(f"Muvaffaqiyatli yakunlandi! Jami {len(df)} ta kunlik ma'lumot '{csv_filename}' fayliga saqlandi.")
+    print(f"Successfully completed! Total {len(df)} daily records saved to '{csv_filename}'.")
 
 if __name__ == "__main__":
     fetch_exchange_rates()
+                                        
